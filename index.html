@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+    <meta charset="utf-8"/>
+    <head>
+        <script type="text/javascript">
+function paintHeart(context, x, y) {
+    var center_x = Math.random()*50 - 25;
+    var center_y = Math.random()*50 - 25;
+    var gr = context.createRadialGradient(x+center_x, y+center_y, 0, x, y, 27.5);
+    gr.addColorStop(0, "HotPink");
+    gr.addColorStop(.45, "DeepPink");
+    gr.addColorStop(.65, "Red");
+    gr.addColorStop(.85, "DarkOrange");
+    gr.addColorStop(1, "Gold");
+
+    context.fillStyle = gr;
+
+    context.beginPath();
+    context.moveTo(x, y-7.5);
+    context.lineTo(x+5, y-12.5);
+    context.lineTo(x+12.5, y-15);
+    context.lineTo(x+17.5, y-13.5);
+    context.lineTo(x+21, y-10);
+    context.lineTo(x+24, y-5)
+    context.lineTo(x+25, y);
+    context.lineTo(x+23.5, y+5);
+    context.lineTo(x+20, y+10);
+    context.lineTo(x+15, y+15);
+    context.lineTo(x+10, y+20);
+    context.lineTo(x+5, y+23);
+    
+    context.lineTo(x, y+28);
+
+    context.lineTo(x-5, y+23);
+    context.lineTo(x-10, y+20);
+    context.lineTo(x-15, y+15);
+    context.lineTo(x-20, y+10);
+    context.lineTo(x-23.5, y+5);
+    context.lineTo(x-25, y);
+    context.lineTo(x-24, y-5);
+    context.lineTo(x-21, y-10);
+    context.lineTo(x-17.5, y-13.5);
+    context.lineTo(x-12.5, y-15);
+    context.lineTo(x-5, y-12.5);
+
+    context.fill();
+    context.closePath();
+}
+
+function archer(context, currentTheta, a) {
+    if (currentTheta < 450) {
+        var theta = (currentTheta) * Math.PI / 180
+        var r = a * theta;
+        var x = r * Math.cos(theta);
+        var y = r * Math.sin(theta);
+
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.save();
+        context.translate(750+x, 700+y);
+        context.rotate(theta);
+        paintHeart(context, 0, 0);
+        context.restore();
+
+        setTimeout(archer, 75, context, currentTheta + 7.5, a);
+    }
+    else {
+        var jump = function() {
+            window.location.href = "codegen.html";
+            window.navigate("codegen.html");
+        }
+
+        setTimeout(jump, 500);
+    }
+}
+
+function main() {
+    var canvas = document.getElementById("ilovechenkx");
+    var context = canvas.getContext("2d");
+
+    context.fillStyle = "black";
+    context.fillRect(0, 0, 1500, 1500);
+
+    context.setTransform(1, 0, 0, 1, 0, 0);
+
+    setTimeout(archer, 250, context, -450, -115);
+}
+
+window.addEventListener("load", main, false);
+        </script>
+    </head>
+
+    <body>
+        <div style="text-align:center">
+            <canvas id="ilovechenkx" width="1500px" height="1500px" style="width:750px;height:750px">
+                Your browser does not support HTML-5 canvas. 
+            </canvas>
+        </div>
+    </body>
+</html>

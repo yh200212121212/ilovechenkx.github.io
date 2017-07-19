@@ -1,0 +1,236 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+    <meta charset="utf-8"/>
+    <head>
+        <script type="text/javascript">
+
+Array.prototype.remove = function(val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
+
+function generatePureFillStyle() {
+    return "DeepPink";
+}
+
+function generateRadialGradient(context, x, y) {
+    var center_x = Math.random()*50 - 25;
+    var center_y = Math.random()*50 - 25;
+    
+    var gr = context.createRadialGradient(x+center_x, y+center_y, 0, x, y, 27.5);
+    gr.addColorStop(0, "HotPink");
+    gr.addColorStop(.25, "DeepPink");
+    gr.addColorStop(.65, "Red");
+    gr.addColorStop(.90, "DarkOrange");
+    gr.addColorStop(1, "Gold");
+
+    return gr;
+}
+
+function paintHeart(context, hasRadialGradient) {
+    var x = 0;
+    var y = 0;
+
+    if (hasRadialGradient) {
+        context.fillStyle = generateRadialGradient(context, x, y);
+    }
+    else {
+        context.fillStyle = generatePureFillStyle();
+    }
+
+    context.beginPath();
+    context.moveTo(x, y-7.5);
+    context.lineTo(x+5, y-12.5);
+    context.lineTo(x+12.5, y-15);
+    context.lineTo(x+17.5, y-13.5);
+    context.lineTo(x+21, y-10);
+    context.lineTo(x+24, y-5)
+    context.lineTo(x+25, y);
+    context.lineTo(x+23.5, y+5);
+    context.lineTo(x+20, y+10);
+    context.lineTo(x+15, y+15);
+    context.lineTo(x+10, y+20);
+    context.lineTo(x+5, y+23);
+    
+    context.lineTo(x, y+28);
+
+    context.lineTo(x-5, y+23);
+    context.lineTo(x-10, y+20);
+    context.lineTo(x-15, y+15);
+    context.lineTo(x-20, y+10);
+    context.lineTo(x-23.5, y+5);
+    context.lineTo(x-25, y);
+    context.lineTo(x-24, y-5);
+    context.lineTo(x-21, y-10);
+    context.lineTo(x-17.5, y-13.5);
+    context.lineTo(x-12.5, y-15);
+    context.lineTo(x-5, y-12.5);
+
+    context.fill();
+    context.closePath();
+}
+
+function createFlowerObject(initX, initY, initVelocityX, initVelocityY) {
+    var ret = new Object();
+
+    ret.mX = initX;
+    ret.mY = initY;
+    ret.mVelocityX = initVelocityX;
+    ret.mVelocityY = initVelocityY;
+    
+    ret.windAccelerate = function (velocityX) {
+        this.mVelocityX += velocityX;
+    };
+
+    ret.move = function () {
+        this.mX += this.mVelocityX;
+        this.mY += this.mVelocityY;
+
+        this.mVelocityX *= 0.75;
+        if (this.mVelocityY < 1.375) this.mVelocityY *= 1.01;
+    };
+
+    ret.paintOnCanvas = function(context) {
+        context.save();
+        context.translate(this.mX, this.mY);
+        context.rotate(15 * Math.PI / 180);
+        paintHeart(context);
+        context.restore();
+    };
+
+    return ret;
+}
+
+function autoPrintText(context, text, initX, initY) {
+    var currentX = initX;
+    var currentY = initY;
+
+    for (var i = 0; i < text.length; i++) {
+        if (text[i] == '\n') {
+            currentY += 50;
+            currentX = initX;
+        }
+        else {
+            context.fillText(text[i], currentX, currentY);
+            currentX += context.measureText(text[i]).width;
+        }
+    }
+}
+
+function createTypewriter(text, x, y) {
+    var ret = new Object();
+
+    ret.mText = text;
+    ret.mCurrentDisplay = 0;
+    ret.mX = x;
+    ret.mY = y;
+    
+    ret.doUpdate = function() { this.mCurrentDisplay++; };
+    ret.paintOnCanvas = function(context) {
+        context.font = "45px consolas";
+        context.fillStyle = "black";
+        autoPrintText(context, this.mText.substr(0, this.mCurrentDisplay), this.mX, this.mY);
+        if (this.mCurrentDisplay < this.mText.length) this.mCurrentDisplay++;
+    }
+    return ret;
+}
+
+function createFlowerTree() {
+    var ret = new Object();
+
+    ret.mFlowerArray = new Array();
+
+    ret.wind = function() {
+        var x = Math.random()*2000;
+        var y = Math.random()*350;
+        var initXVelocity = Math.random() * 4;
+        var fixedYVelocity = 5;
+
+        this.mFlowerArray.push(createFlowerObject(x, y, initXVelocity, fixedYVelocity));
+
+        for (var i = 0; i < this.mFlowerArray.length; i++) {
+            this.mFlowerArray[i].windAccelerate(Math.random()%2 + 1);
+        }
+    }
+
+    ret.gc = function() {
+        for (var i = 0; i < this.mFlowerArray.length; i++) {
+            if (this.mFlowerArray[i].mX > 2000 || this.mFlowerArray[i].mY > 2000) { 
+                this.mFlowerArray.remove(i);
+            }
+        }
+    }
+
+    ret.paintAllFlowers = function(context) {
+        for (var i = 0; i < this.mFlowerArray.length; i++) {
+            this.mFlowerArray[i].paintOnCanvas(context);
+        }
+    }
+
+    ret.tick = function() {
+        for (var i = 0; i < this.mFlowerArray.length; i++) {
+            this.mFlowerArray[i].move();
+        }
+    }
+
+    return ret;
+}
+
+function main() {
+    var string = "struct cz;\n\n" +
+                 "struct azheng {\n" +
+                 "  saber::shared_ptr<cz> p_lover;\n" +
+                 "};\n\n" + 
+                 "struct cz {\n" + 
+                 "  saber::shared_ptr<azheng> p_lover;\n" +
+                 "};\n\n" +
+                 "cz *p_cz = new cz;\n" +
+                 "azheng *p_azheng = new azheng;\n\n" +
+                 "p_cz.p_lover.reset(p_azheng);\n" +
+                 "p_azheng.p_lover.reset(p_cz);\n" +
+                 "\n" +
+                 "你若不离不弃，我必生死相依\n\n" +
+                 "我爱你，阿正";
+
+    var flowerTree = createFlowerTree();
+    var typewriter = createTypewriter(string, 200, 150);
+
+    var ticks = 0;
+
+    var canvasContext = document.getElementById("ilovechenkx").getContext("2d");
+
+    var callbacker = function() {
+        canvasContext.clearRect(0, 0, 2000, 2000);
+        canvasContext.fillStyle = "MistyRose";
+        canvasContext.fillRect(0, 0, 2000, 2000);
+
+        if (ticks > 4096) ticks = 0;
+
+        if (ticks % 32 == 0) flowerTree.gc();
+        if (ticks % 3 == 0) flowerTree.wind();
+        flowerTree.tick();
+        flowerTree.paintAllFlowers(canvasContext);
+        typewriter.paintOnCanvas(canvasContext);
+        ticks++;
+        
+        setTimeout(callbacker, 65);
+    }
+
+    setTimeout(callbacker, 1000);
+}
+
+window.addEventListener("load", main, false);
+
+        </script>
+    </head>
+
+    <body>
+        <div style="text-align:center">
+            <canvas id="ilovechenkx" style="width:1000px;height:1000px" width="2000px" height="2000px">
+                Your browser does not support HTML-5 canvas. 
+            </canvas>
+        </div>
+    </body>
+</html>
