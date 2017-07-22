@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh">
     <meta charset="utf-8"/>
     <head>
@@ -143,7 +143,7 @@ function createFlowerTree() {
     ret.mFlowerArray = new Array();
 
     ret.wind = function() {
-        var x = Math.random()*2000;
+        var x = Math.random()*2350 - 350;
         var y = Math.random()*350;
         var initXVelocity = Math.random() * 4;
         var fixedYVelocity = 5;
@@ -178,6 +178,38 @@ function createFlowerTree() {
     return ret;
 }
 
+function createTimeLineDisplay () {
+    var ret = new Object();
+
+    ret.currentDay = 0;
+    ret.currentHour = 0;
+    ret.currentMinute = 0;
+    ret.currentSecond = 0;
+
+    ret.tick = function() {
+        var date0 = new Date("2016/7/12");
+        var date1 = new Date();
+
+        var deltaMilliSeconds = date1.getTime() - date0.getTime();
+        
+        this.currentDay = Math.floor(deltaMilliSeconds/(24*3600*1000));
+        var leftover1 = deltaMilliSeconds % (24*3600*1000);
+        this.currentHour = Math.floor(leftover1/(3600*1000));
+        var leftover2 = leftover1 % (3600*1000);
+        this.currentMinute = Math.floor(leftover2/(60*1000));
+        var leftover3 = leftover2 % (60*1000);
+        this.currentSecond = Math.round(leftover3/1000);
+    }
+
+    ret.paintOnCanvas = function(context) {
+            context.font = "consolas 65px";
+            context.fillStyle = "black";
+            context.fillText("现在是阿泽和阿正在一起的第"+this.currentDay+"天"+this.currentHour+"小时"+this.currentMinute+"分钟"+this.currentSecond+"秒", 0, 1750);
+    }
+
+    return ret;
+}
+
 function main() {
     var string = "struct cz;\n\n" +
                  "struct azheng {\n" +
@@ -196,6 +228,7 @@ function main() {
 
     var flowerTree = createFlowerTree();
     var typewriter = createTypewriter(string, 200, 150);
+    var timeLineDisplay = createTimeLineDisplay();
 
     var ticks = 0;
 
@@ -209,10 +242,12 @@ function main() {
         if (ticks > 4096) ticks = 0;
 
         if (ticks % 32 == 0) flowerTree.gc();
-        if (ticks % 3 == 0) flowerTree.wind();
+        if (ticks % 5 == 0) flowerTree.wind();
         flowerTree.tick();
+        timeLineDisplay.tick();
         flowerTree.paintAllFlowers(canvasContext);
         typewriter.paintOnCanvas(canvasContext);
+        timeLineDisplay.paintOnCanvas(canvasContext);
         ticks++;
         
         setTimeout(callbacker, 65);
