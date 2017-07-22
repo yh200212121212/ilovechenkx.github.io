@@ -12,7 +12,7 @@ Array.prototype.remove = function(val) {
 };
 
 function generatePureFillStyle() {
-    return "DeepPink";
+    return "#66ccff";
 }
 
 function generateRadialGradient(context, x, y) {
@@ -236,7 +236,7 @@ function main() {
 
     var callbacker = function() {
         canvasContext.clearRect(0, 0, 2000, 2000);
-        canvasContext.fillStyle = "MistyRose";
+        canvasContext.fillStyle = "AliceBlue";
         canvasContext.fillRect(0, 0, 2000, 2000);
 
         if (ticks > 4096) ticks = 0;
