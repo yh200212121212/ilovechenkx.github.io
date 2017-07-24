@@ -15,30 +15,11 @@ function generatePureFillStyle() {
     return "DeepPink";
 }
 
-function generateRadialGradient(context, x, y) {
-    var center_x = Math.random()*50 - 25;
-    var center_y = Math.random()*50 - 25;
-    
-    var gr = context.createRadialGradient(x+center_x, y+center_y, 0, x, y, 27.5);
-    gr.addColorStop(0, "HotPink");
-    gr.addColorStop(.25, "DeepPink");
-    gr.addColorStop(.65, "Red");
-    gr.addColorStop(.90, "DarkOrange");
-    gr.addColorStop(1, "Gold");
-
-    return gr;
-}
-
 function paintHeart(context, hasRadialGradient) {
     var x = 0;
     var y = 0;
 
-    if (hasRadialGradient) {
-        context.fillStyle = generateRadialGradient(context, x, y);
-    }
-    else {
-        context.fillStyle = generatePureFillStyle();
-    }
+    context.fillStyle = generatePureFillStyle();
 
     context.beginPath();
     context.moveTo(x, y-7.5);
@@ -143,7 +124,7 @@ function createFlowerTree() {
     ret.mFlowerArray = new Array();
 
     ret.wind = function() {
-        var x = Math.random()*2000;
+        var x = Math.random()*2350 - 350;
         var y = Math.random()*350;
         var initXVelocity = Math.random() * 4;
         var fixedYVelocity = 5;
@@ -209,7 +190,7 @@ function main() {
         if (ticks > 4096) ticks = 0;
 
         if (ticks % 32 == 0) flowerTree.gc();
-        if (ticks % 3 == 0) flowerTree.wind();
+        if (ticks % 4 == 0) flowerTree.wind();
         flowerTree.tick();
         flowerTree.paintAllFlowers(canvasContext);
         typewriter.paintOnCanvas(canvasContext);
