@@ -7,11 +7,10 @@ function paintHeart(context, x, y) {
     var center_x = Math.random()*50 - 25;
     var center_y = Math.random()*50 - 25;
     var gr = context.createRadialGradient(x+center_x, y+center_y, 0, x, y, 27.5);
-    gr.addColorStop(0, "HotPink");
-    gr.addColorStop(.45, "DeepPink");
-    gr.addColorStop(.65, "Red");
-    gr.addColorStop(.85, "DarkOrange");
-    gr.addColorStop(1, "Gold");
+    gr.addColorStop(0, "AliceBlue");
+    gr.addColorStop(.35, "#66ccff");
+    gr.addColorStop(.65, "DeepSkyBlue");
+    gr.addColorStop(1, "DodgerBlue");
 
     context.fillStyle = gr;
 

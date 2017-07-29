@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh">
     <meta charset="utf-8"/>
     <head>
@@ -6,6 +6,11 @@
             @font-face {
                 font-family: "amc";
                 src:url("amc.ttf");
+            }
+
+            @font-face {
+                font-family: "con";
+                src:url("con.ttf");
             }
         </style>
 
@@ -76,7 +81,7 @@ function createFlowerObject(initX, initY, initVelocityX, initVelocityY) {
         this.mX += this.mVelocityX;
         this.mY += this.mVelocityY;
 
-        this.mVelocityX *= 0.75;
+        this.mVelocityX *= 0.95;
         if (this.mVelocityY < 1.375) this.mVelocityY *= 1.01;
     };
 
@@ -100,6 +105,9 @@ function autoPrintText(context, text, initX, initY) {
             currentY += 50;
             currentX = initX;
         }
+        else if (text[i] == '\f') {
+            // Do nothing
+        }
         else {
             context.fillText(text[i], currentX, currentY);
             currentX += context.measureText(text[i]).width;
@@ -117,7 +125,7 @@ function createTypewriter(text, x, y) {
     
     ret.doUpdate = function() { this.mCurrentDisplay++; };
     ret.paintOnCanvas = function(context) {
-        context.font = "45px amc";
+        context.font = "55px con";
         context.fillStyle = "black";
         autoPrintText(context, this.mText.substr(0, this.mCurrentDisplay), this.mX, this.mY);
         if (this.mCurrentDisplay < this.mText.length) this.mCurrentDisplay++;
@@ -131,16 +139,18 @@ function createFlowerTree() {
     ret.mFlowerArray = new Array();
 
     ret.wind = function() {
+        for (var i = 0; i < this.mFlowerArray.length; i++) {
+            this.mFlowerArray[i].windAccelerate(Math.random()%2 + 3);
+        }
+    }
+
+    ret.addFlower = function() {
         var x = Math.random()*2350 - 350;
         var y = Math.random()*350;
         var initXVelocity = Math.random() * 4;
         var fixedYVelocity = 5;
 
         this.mFlowerArray.push(createFlowerObject(x, y, initXVelocity, fixedYVelocity));
-
-        for (var i = 0; i < this.mFlowerArray.length; i++) {
-            this.mFlowerArray[i].windAccelerate(Math.random()%2 + 1);
-        }
     }
 
     ret.gc = function() {
@@ -190,29 +200,54 @@ function createTimeLineDisplay () {
     }
 
     ret.paintOnCanvas = function(context) {
-            context.font = "amc 65px";
+            context.font = "65px amc";
             context.fillStyle = "black";
-            context.fillText("现在是阿泽和阿正在一起的第"+this.currentDay+"天"+this.currentHour+"小时"+this.currentMinute+"分钟"+this.currentSecond+"秒", 0, 1750);
+            context.fillText("现在是阿泽和阿正在一起的第"+this.currentDay+"天"+this.currentHour+"小时"+this.currentMinute+"分钟"+this.currentSecond+"秒", 150, 1750);
     }
 
     return ret;
 }
 
+function createSongDisplay(timeTextArray) {
+    var ret = new Object();
+
+    return ret;
+}
+
 function main() {
-    var string = "struct cz;\n\n" +
-                 "struct azheng {\n" +
-                 "  saber::shared_ptr<cz> p_lover;\n" +
-                 "};\n\n" + 
-                 "struct cz {\n" + 
-                 "  saber::shared_ptr<azheng> p_lover;\n" +
-                 "};\n\n" +
-                 "cz *p_cz = new cz;\n" +
-                 "azheng *p_azheng = new azheng;\n\n" +
-                 "p_cz->p_lover.reset(p_azheng);\n" +
-                 "p_azheng->p_lover.reset(p_cz);\n" +
-                 "\n" +
-                 "你若不离不弃，我必生死相依\n\n" +
-                 "我爱你，阿正";
+    var string = "Within you I lose myself\n\f" +
+                 " without you\n\f" +
+                 " I find myself wanting to be lost again.\n\n" +
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "Love is a chord in life, not a solo.\n\n" +
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "Never stop smiling, not even when you're sad,\n\f" +
+                 " some man fall in love with your smile.\n\n" +
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "Don't cry because it is over,\n\f" + 
+                 " smile because it happened.\n\n" + 
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "Love triumphs over everthing.\n\n" +
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "Love has no age, no limit and no death.\n\n" + 
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "I love you not because of who you are,\n\f" +
+                 " but because of who I am when I am with you.\n\n" +
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "Coffee is lonely without cups.\n\f" +
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 " I am lonely without you.\n\n" +
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "The furthest distance in the world,\n" +
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "    Is not between life and death;\n\n"+
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "But when I stand in front of you,\n"+
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "    Yet you don't know that I love you.\n\n" +
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f\f" +
+                 "Forgive me?";
 
     var flowerTree = createFlowerTree();
     var typewriter = createTypewriter(string, 200, 150);
@@ -229,7 +264,8 @@ function main() {
 
         if (ticks > 4096) ticks = 0;
         if (ticks % 32 == 0) flowerTree.gc();
-        if (ticks % 5 == 0) flowerTree.wind();
+        if (ticks % 8 == 0) flowerTree.addFlower();
+        if (ticks % 96 == 0) flowerTree.wind();
         flowerTree.tick();
         timeLineDisplay.tick();
         flowerTree.paintAllFlowers(canvasContext);
@@ -237,7 +273,7 @@ function main() {
         timeLineDisplay.paintOnCanvas(canvasContext);
         ticks++;
         
-        setTimeout(callbacker, 65);
+        setTimeout(callbacker, 75);
     }
 
     setTimeout(callbacker, 1000);
@@ -253,6 +289,10 @@ window.addEventListener("load", main, false);
             <canvas id="ilovechenkx" style="width:1000px;height:1000px" width="2000px" height="2000px">
                 Your browser does not support HTML-5 canvas. 
             </canvas>
+            <br/>
+            <audio autoplay="autoplay" controls="controls">
+                <source src="白石溪.mp3"/>
+            </audio>
         </div>
     </body>
 </html>
